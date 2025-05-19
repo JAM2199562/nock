@@ -110,7 +110,7 @@ MASTER_PRIVKEY=$($WALLET_CMD gen-master-privkey --seedphrase "$SEED_PHRASE" | gr
 echo "主私钥：$MASTER_PRIVKEY"
 
 echo -e "\n📬 获取主公钥..."
-MASTER_PUBKEY=$($WALLET_CMD gen-master-pubkey --master-privkey "$MASTER_PRIVKEY" | grep -i "master public key" | awk '{print $NF}')
+MASTER_PUBKEY=$($WALLET_CMD keygen | grep -i "New Public Key" | sed 's/.*"\(.*\)".*/\1/')
 echo "主公钥：$MASTER_PUBKEY"
 
 echo -e "\n📄 写入 Makefile 挖矿公钥..."
