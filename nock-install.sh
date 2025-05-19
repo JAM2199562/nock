@@ -1,89 +1,89 @@
 #!/bin/bash
 
-set -e
+# set -e
 
-# 设置 GitHub 代理
-GITHUB_PROXY="https://ghproxy.nyxyy.org/"
+# # 设置 GitHub 代理
+# GITHUB_PROXY="https://ghproxy.nyxyy.org/"
 
-echo -e "\n📦 正在更新系统并安装依赖..."
-apt-get update && apt install sudo -y
-sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip
+# echo -e "\n📦 正在更新系统并安装依赖..."
+# apt-get update && apt install sudo -y
+# sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip
 
-echo -e "\n🔧 检查并安装 chsrc 换源工具..."
-if ! command -v chsrc &> /dev/null; then
-    echo "未找到 chsrc，开始安装..."
-    CHSRC_PROXY="${GITHUB_PROXY}https://raw.githubusercontent.com/RubyMetric/chsrc/main/tool/installer.sh"
-    curl -L "$CHSRC_PROXY" | bash -s -- -d /usr/local/bin
-else
-    echo "chsrc 已安装，跳过安装步骤"
-fi
+# echo -e "\n🔧 检查并安装 chsrc 换源工具..."
+# if ! command -v chsrc &> /dev/null; then
+#     echo "未找到 chsrc，开始安装..."
+#     CHSRC_PROXY="${GITHUB_PROXY}https://raw.githubusercontent.com/RubyMetric/chsrc/main/tool/installer.sh"
+#     curl -L "$CHSRC_PROXY" | bash -s -- -d /usr/local/bin
+# else
+#     echo "chsrc 已安装，跳过安装步骤"
+# fi
 
-echo -e "\n🦀 检查 Rust 安装状态..."
-if command -v rustc &> /dev/null && command -v cargo &> /dev/null; then
-    echo "Rust 已安装，当前版本："
-    rustc --version
-    cargo --version
-else
-    echo "未检测到 Rust，开始安装..."
-    # 设置 RUSTUP 镜像源为中科大源
-    export RUSTUP_DIST_SERVER="https://mirrors.ustc.edu.cn/rust-static"
-    export RUSTUP_UPDATE_ROOT="https://mirrors.ustc.edu.cn/rust-static/rustup"
+# echo -e "\n🦀 检查 Rust 安装状态..."
+# if command -v rustc &> /dev/null && command -v cargo &> /dev/null; then
+#     echo "Rust 已安装，当前版本："
+#     rustc --version
+#     cargo --version
+# else
+#     echo "未检测到 Rust，开始安装..."
+#     # 设置 RUSTUP 镜像源为中科大源
+#     export RUSTUP_DIST_SERVER="https://mirrors.ustc.edu.cn/rust-static"
+#     export RUSTUP_UPDATE_ROOT="https://mirrors.ustc.edu.cn/rust-static/rustup"
 
-    # 安装 Rust
-    curl --proto '=https' --tlsv1.2 -sSf https://mirrors.ustc.edu.cn/rust-static/rustup/rustup-init.sh | sh -s -- -y
-    source "$HOME/.cargo/env"
-fi
+#     # 安装 Rust
+#     curl --proto '=https' --tlsv1.2 -sSf https://mirrors.ustc.edu.cn/rust-static/rustup/rustup-init.sh | sh -s -- -y
+#     source "$HOME/.cargo/env"
+# fi
 
-# 使用 chsrc 配置 Cargo 镜像源
-echo -e "\n📡 配置 Cargo 镜像源..."
-# 删除可能存在的旧配置文件
-rm -f ~/.cargo/config
+# # 使用 chsrc 配置 Cargo 镜像源
+# echo -e "\n📡 配置 Cargo 镜像源..."
+# # 删除可能存在的旧配置文件
+# rm -f ~/.cargo/config
 
-mkdir -p ~/.cargo
-cat > ~/.cargo/config.toml << EOF
-[source.crates-io]
-replace-with = 'mirror'
+# mkdir -p ~/.cargo
+# cat > ~/.cargo/config.toml << EOF
+# [source.crates-io]
+# replace-with = 'mirror'
 
-[source.mirror]
-registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
+# [source.mirror]
+# registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
 
-[net]
-git-fetch-with-cli = true
+# [net]
+# git-fetch-with-cli = true
 
-[http]
-check-revoke = false
-EOF
+# [http]
+# check-revoke = false
+# EOF
 
-# 使用 chsrc 设置为 ustc 源（中科大源）
-chsrc set cargo ustc
+# # 使用 chsrc 设置为 ustc 源（中科大源）
+# chsrc set cargo ustc
 
-rustup default stable
+# rustup default stable
 
-echo -e "\n📁 检查 nockchain 仓库..."
-# 设置 GitHub 代理
-GITHUB_PROXY="https://ghproxy.nyxyy.org/"
-REPO_URL="${GITHUB_PROXY}https://github.com/zorp-corp/nockchain"
+# echo -e "\n📁 检查 nockchain 仓库..."
+# # 设置 GitHub 代理
+# GITHUB_PROXY="https://ghproxy.nyxyy.org/"
+# REPO_URL="${GITHUB_PROXY}https://github.com/zorp-corp/nockchain"
 
-if [ -d "nockchain" ]; then
-  echo "⚠️ 已存在 nockchain 目录，是否删除重新克隆（必须选 y ）？(y/n)"
-  read -r confirm
-  if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
-    rm -rf nockchain
-    git clone --depth 1 "$REPO_URL"
-  else
-    echo "➡️ 使用已有目录 nockchain"
-  fi
-else
-  git clone --depth 1 "$REPO_URL"
-fi
+# if [ -d "nockchain" ]; then
+#   echo "⚠️ 已存在 nockchain 目录，是否删除重新克隆（必须选 y ）？(y/n)"
+#   read -r confirm
+#   if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
+#     rm -rf nockchain
+#     git clone --depth 1 "$REPO_URL"
+#   else
+#     echo "➡️ 使用已有目录 nockchain"
+#   fi
+# else
+#   git clone --depth 1 "$REPO_URL"
+# fi
 
 cd nockchain
 
-echo -e "\n🔧 开始编译核心组件..."
-make install-hoonc
-make build
-make install-nockchain-wallet
-make install-nockchain
+# echo -e "\n🔧 开始编译核心组件..."
+# make install-hoonc
+# make build
+# make install-nockchain-wallet
+# make install-nockchain
 
 echo -e "\n✅ 编译完成，配置环境变量..."
 echo 'export PATH="$PATH:/root/nockchain/target/release"' >> ~/.bashrc
@@ -102,15 +102,15 @@ fi
 SEED_OUTPUT=$($WALLET_CMD keygen)
 echo "$SEED_OUTPUT"
 
-SEED_PHRASE=$(echo "$SEED_OUTPUT" | grep -iE "seed phrase" | sed 's/.*: //')
+SEED_PHRASE=$(echo "$SEED_OUTPUT" | grep -i "memo:" | sed 's/.*memo: //')
 echo -e "\n🧠 助记词：$SEED_PHRASE"
 
 echo -e "\n🔑 从助记词派生主私钥..."
-MASTER_PRIVKEY=$($WALLET_CMD gen-master-privkey --seedphrase "$SEED_PHRASE" | grep -i "master private key" | awk '{print $NF}')
+MASTER_PRIVKEY=$(echo "$SEED_OUTPUT" | grep -A1 "New Private Key" | tail -n1 | sed 's/"//g')
 echo "主私钥：$MASTER_PRIVKEY"
 
 echo -e "\n📬 获取主公钥..."
-MASTER_PUBKEY=$($WALLET_CMD keygen | grep -i "New Public Key" | sed 's/.*"\(.*\)".*/\1/')
+MASTER_PUBKEY=$(echo "$SEED_OUTPUT" | grep -A1 "New Public Key" | tail -n1 | sed 's/"//g')
 echo "主公钥：$MASTER_PUBKEY"
 
 echo -e "\n📄 写入 Makefile 挖矿公钥..."
