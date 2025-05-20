@@ -13,8 +13,8 @@ apt-get update && apt-get install -y needrestart
 if [ -f "/etc/needrestart/needrestart.conf" ]; then
     # 备份原配置文件
     cp /etc/needrestart/needrestart.conf /etc/needrestart/needrestart.conf.bak
-    # 修改配置为自动重启
-    sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/' /etc/needrestart/needrestart.conf
+    # 修改配置为自动重启（使用更精确的匹配模式）
+    sed -i '/^#\$nrconf{restart} = '"'"'i'"'"';/c\$nrconf{restart} = '"'"'a'"'"';' /etc/needrestart/needrestart.conf
     echo "✅ needrestart 已配置为自动重启模式"
 else
     echo "⚠️ 未找到 needrestart 配置文件，跳过配置"
@@ -67,6 +67,16 @@ git-fetch-with-cli = true
 
 [http]
 check-revoke = false
+
+[registries.mirror]
+index = "https://mirrors.ustc.edu.cn/crates.io-index"
+
+[source.github]
+git = "https://github.com"
+replace-with = 'github-mirror'
+
+[source.github-mirror]
+git = "https://ghproxy.nyxyy.org/https://github.com"
 EOF
 
 # 使用 chsrc 设置为 ustc 源（中科大源）
