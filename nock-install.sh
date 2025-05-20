@@ -5,6 +5,21 @@ set -e
 # 设置 GitHub 代理
 GITHUB_PROXY="https://ghproxy.nyxyy.org/"
 
+echo -e "\n🔧 配置 needrestart 自动重启服务..."
+# 安装 needrestart
+apt-get update && apt-get install -y needrestart
+
+# 配置 needrestart 自动重启
+if [ -f "/etc/needrestart/needrestart.conf" ]; then
+    # 备份原配置文件
+    cp /etc/needrestart/needrestart.conf /etc/needrestart/needrestart.conf.bak
+    # 修改配置为自动重启
+    sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/' /etc/needrestart/needrestart.conf
+    echo "✅ needrestart 已配置为自动重启模式"
+else
+    echo "⚠️ 未找到 needrestart 配置文件，跳过配置"
+fi
+
 echo -e "\n📦 正在更新系统并安装依赖..."
 apt-get update && apt install sudo -y
 sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip
