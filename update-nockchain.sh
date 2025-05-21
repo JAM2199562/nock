@@ -4,15 +4,6 @@ set -e
 
 echo -e "\n🔄 开始更新 nockchain..."
 
-# 检查是否在正确的目录
-if [ ! -d "nockchain" ]; then
-    echo "❌ 错误：未找到 nockchain 目录"
-    echo "请确保你在包含 nockchain 目录的父目录中运行此脚本"
-    exit 1
-fi
-
-cd nockchain
-
 # 检查并创建 .env 文件
 echo -e "\n📝 检查环境配置文件..."
 if [ ! -f ".env" ]; then
@@ -30,8 +21,19 @@ fi
 # 备份当前环境变量
 echo -e "\n📦 备份当前环境变量..."
 if [ -f ".env" ]; then
-    cp .env .env.backup
-    echo "✅ 已备份 .env 文件到 .env.backup"
+    # 创建备份目录（如果不存在）
+    mkdir -p .env_backups
+    
+    # 使用时间戳创建备份文件名
+    timestamp=$(date +"%Y%m%d_%H%M%S")
+    backup_file=".env_backups/.env.backup_${timestamp}"
+    
+    cp .env "$backup_file"
+    echo "✅ 已备份 .env 文件到 ${backup_file}"
+    
+    # 显示最近的备份
+    echo -e "\n📋 最近的备份文件："
+    ls -t .env_backups/.env.backup_* | head -n 5
 fi
 
 # 询问并更新 MINING_PUBKEY
@@ -72,4 +74,4 @@ echo "   screen -r leader   # 或 screen -r follower"
 echo "   按 Ctrl+C 停止当前节点"
 echo "   然后运行 make run-nockchain-leader 或 make run-nockchain-follower"
 echo -e "\n2. 如果遇到问题，可以查看备份的环境变量："
-echo "   .env.backup" 
+echo "   ls -t .env_backups/.env.backup_* | head -n 5  # 查看最近的5个备份" 
