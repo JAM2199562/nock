@@ -179,16 +179,3 @@ echo -e "Ctrl+A 再按 D 可退出 screen 会话"
 
 echo -e "\n🎉 部署完成，祝你挖矿愉快！"
 
-# 配置 Cargo 使用 GitHub 代理
-echo -e "\n📡 配置 Cargo GitHub 代理..."
-mkdir -p ~/.cargo
-cat >> ~/.cargo/config.toml << EOF
-
-[source.crates-io]
-registry = "${GITHUB_PROXY}https://github.com/rust-lang/crates.io-index"
-replace-with = 'ustc'
-
-[source.ustc]
-registry = "git://mirrors.ustc.edu.cn/crates.io-index"
-EOF
-
