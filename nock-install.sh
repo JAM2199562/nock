@@ -107,8 +107,6 @@ curl -L "$UPDATE_SCRIPT_URL" -o update-nockchain.sh
 chmod +x update-nockchain.sh
 echo "✅ 更新脚本已下载并设置权限"
 
-# 返回上级目录
-cd ..
 
 # 创建并配置 .env 文件
 echo -e "\n📝 创建环境配置文件..."
