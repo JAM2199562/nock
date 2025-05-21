@@ -100,6 +100,18 @@ fi
 
 cd nockchain
 
+# 修改项目 Cargo.toml 中的 GitHub 链接
+echo -e "\n🔧 修改项目依赖的 GitHub 链接..."
+if [ -f "Cargo.toml" ]; then
+    # 备份原始文件
+    cp Cargo.toml Cargo.toml.bak
+    # 替换 GitHub 链接为代理链接
+    sed -i "s|https://github.com/|${GITHUB_PROXY}https://github.com/|g" Cargo.toml
+    echo "✅ 已更新 Cargo.toml 中的 GitHub 链接"
+else
+    echo "⚠️ 未找到 Cargo.toml 文件"
+fi
+
 # 下载更新脚本
 echo -e "\n📥 下载更新脚本..."
 UPDATE_SCRIPT_URL="${GITHUB_PROXY}https://raw.githubusercontent.com/JAM2199562/nock/main/update-nockchain.sh"
