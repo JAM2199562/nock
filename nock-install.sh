@@ -100,6 +100,18 @@ fi
 
 cd nockchain
 
+# 创建并配置 .env 文件
+echo -e "\n📝 创建环境配置文件..."
+if [ ! -f ".env" ]; then
+    cp .env_example .env
+fi
+
+# 设置默认环境变量
+echo -e "\n🔧 配置环境变量..."
+echo 'export RUST_BACKTRACE=full' >> ~/.bashrc
+echo 'export RUST_LOG=info,nockchain=debug,nockchain_libp2p_io=info,libp2p=info,libp2p_quic=info' >> ~/.bashrc
+echo 'export MINIMAL_LOG_FORMAT=true' >> ~/.bashrc
+
 echo -e "\n🔧 开始编译核心组件..."
 make install-hoonc
 make build
@@ -108,8 +120,6 @@ make install-nockchain
 
 echo -e "\n✅ 编译完成，配置环境变量..."
 echo 'export PATH="$PATH:/root/nockchain/target/release"' >> ~/.bashrc
-echo 'export RUST_LOG=info' >> ~/.bashrc
-echo 'export MINIMAL_LOG_FORMAT=true' >> ~/.bashrc
 source ~/.bashrc
 
 # === 生成钱包 ===
@@ -134,8 +144,8 @@ echo -e "\n📬 获取主公钥..."
 MASTER_PUBKEY=$(echo "$SEED_OUTPUT" | grep -A1 "New Public Key" | tail -n1 | sed 's/"//g')
 echo "主公钥：$MASTER_PUBKEY"
 
-echo -e "\n📄 写入 Makefile 挖矿公钥..."
-sed -i "s|^export MINING_PUBKEY :=.*$|export MINING_PUBKEY := $MASTER_PUBKEY|" Makefile
+echo -e "\n📄 写入 .env 挖矿公钥..."
+sed -i "s|^MINING_PUBKEY=.*$|MINING_PUBKEY=$MASTER_PUBKEY|" .env
 
 # === 可选：初始化 choo hoon 测试 ===
 read -p $'\n🌀 是否执行 choo 初始化测试？这一步可能卡住界面，非必须操作。输入 y 继续：' confirm_choo
@@ -161,15 +171,16 @@ echo -e "Ctrl+A 再按 D 可退出 screen 会话"
 
 echo -e "\n🎉 部署完成，祝你挖矿愉快！"
 
-# 修改 Cargo 配置中的 GitHub 链接也使用代理
-# 删除这段重复的配置
-# mkdir -p ~/.cargo
-# cat > ~/.cargo/config << EOF
-# [source.crates-io]
-# registry = "${GITHUB_PROXY}https://github.com/rust-lang/crates.io-index"
-# replace-with = 'ustc'
-# 
-# [source.ustc]
-# registry = "git://mirrors.ustc.edu.cn/crates.io-index"
-# EOF
+# 配置 Cargo 使用 GitHub 代理
+echo -e "\n📡 配置 Cargo GitHub 代理..."
+mkdir -p ~/.cargo
+cat >> ~/.cargo/config.toml << EOF
+
+[source.crates-io]
+registry = "${GITHUB_PROXY}https://github.com/rust-lang/crates.io-index"
+replace-with = 'ustc'
+
+[source.ustc]
+registry = "git://mirrors.ustc.edu.cn/crates.io-index"
+EOF
 
