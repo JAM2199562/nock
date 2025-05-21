@@ -13,11 +13,41 @@ fi
 
 cd nockchain
 
+# 检查并创建 .env 文件
+echo -e "\n📝 检查环境配置文件..."
+if [ ! -f ".env" ]; then
+    echo "⚠️ 未找到 .env 文件，从示例文件创建..."
+    if [ -f ".env_example" ]; then
+        cp .env_example .env
+        echo "✅ 已从 .env_example 创建 .env 文件"
+    else
+        echo "❌ 错误：未找到 .env_example 文件"
+        echo "请确保项目包含 .env_example 文件"
+        exit 1
+    fi
+fi
+
 # 备份当前环境变量
 echo -e "\n📦 备份当前环境变量..."
 if [ -f ".env" ]; then
     cp .env .env.backup
     echo "✅ 已备份 .env 文件到 .env.backup"
+fi
+
+# 询问并更新 MINING_PUBKEY
+echo -e "\n🔑 请输入你的挖矿公钥 (MINING_PUBKEY)："
+read -r mining_pubkey
+if [ -n "$mining_pubkey" ]; then
+    # 如果 .env 中已有 MINING_PUBKEY，则更新它
+    if grep -q "^MINING_PUBKEY=" .env; then
+        sed -i "s|^MINING_PUBKEY=.*$|MINING_PUBKEY=$mining_pubkey|" .env
+    else
+        # 如果不存在，则添加到文件末尾
+        echo "MINING_PUBKEY=$mining_pubkey" >> .env
+    fi
+    echo "✅ 已更新挖矿公钥"
+else
+    echo "⚠️ 未输入挖矿公钥，保持原有配置"
 fi
 
 # 拉取最新代码
