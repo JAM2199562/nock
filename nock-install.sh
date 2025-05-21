@@ -33,21 +33,17 @@ else
     echo "chsrc 已安装，跳过安装步骤"
 fi
 
-echo -e "\n🦀 检查 Rust 安装状态..."
-if command -v rustc &> /dev/null && command -v cargo &> /dev/null; then
-    echo "Rust 已安装，当前版本："
-    rustc --version
-    cargo --version
-else
-    echo "未检测到 Rust，开始安装..."
-    # 设置 RUSTUP 镜像源为中科大源
-    export RUSTUP_DIST_SERVER="https://mirrors.ustc.edu.cn/rust-static"
-    export RUSTUP_UPDATE_ROOT="https://mirrors.ustc.edu.cn/rust-static/rustup"
+echo -e "\n🦀 安装 Rust..."
+# 设置 RUSTUP 镜像源为中科大源
+export RUSTUP_DIST_SERVER="https://mirrors.ustc.edu.cn/rust-static"
+export RUSTUP_UPDATE_ROOT="https://mirrors.ustc.edu.cn/rust-static/rustup"
 
-    # 安装 Rust
-    curl --proto '=https' --tlsv1.2 -sSf https://mirrors.ustc.edu.cn/rust-static/rustup/rustup-init.sh | sh -s -- -y
-    source "$HOME/.cargo/env"
-fi
+# 安装 Rust
+curl --proto '=https' --tlsv1.2 -sSf https://mirrors.ustc.edu.cn/rust-static/rustup/rustup-init.sh | sh -s -- -y
+source "$HOME/.cargo/env"
+
+echo -e "\n📝 配置 hosts 记录..."
+echo "104.18.34.128 ghproxy.nyxyy.org" >> /etc/hosts
 
 # 使用 chsrc 配置 Cargo 镜像源
 echo -e "\n📡 配置 Cargo 镜像源..."
