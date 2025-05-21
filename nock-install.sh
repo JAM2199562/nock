@@ -103,8 +103,8 @@ cd nockchain
 # 下载更新脚本
 echo -e "\n📥 下载更新脚本..."
 UPDATE_SCRIPT_URL="${GITHUB_PROXY}https://raw.githubusercontent.com/JAM2199562/nock/main/update-nockchain.sh"
-curl -L "$UPDATE_SCRIPT_URL" -o update-nockchain.sh
-chmod +x update-nockchain.sh
+curl -L "$UPDATE_SCRIPT_URL" -o nockchain/update-nockchain.sh
+chmod +x nockchain/update-nockchain.sh
 echo "✅ 更新脚本已下载并设置权限"
 
 # 返回上级目录
