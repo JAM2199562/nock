@@ -40,14 +40,19 @@ apt-get update && apt install sudo -y
 sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip
 
 echo -e "\n🦀 安装 Rust..."
-# 设置 Rust 镜像源为阿里云源
-export RUSTUP_UPDATE_ROOT="https://mirrors.aliyun.com/rust-static/rustup"
-export RUSTUP_DIST_SERVER="https://mirrors.aliyun.com/rust-static"
 
-# 下载并执行 rustup-init.sh
-curl -L -o rustup-init.sh "${GITHUB_PROXY}https://raw.githubusercontent.com/JAM2199562/nock/refs/heads/main/rustup-init.sh"
-chmod +x rustup-init.sh
-./rustup-init.sh -y
+# 设置 rustup 镜像为 TUNA
+export RUSTUP_UPDATE_ROOT="https://mirrors.tuna.tsinghua.edu.cn/rust-static/rustup"
+export RUSTUP_DIST_SERVER="https://mirrors.tuna.tsinghua.edu.cn/rust-static"
+
+# 先尝试用 TUNA 镜像安装
+if ! curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; then
+    echo "⚠️ TUNA 镜像安装失败，尝试官方源..."
+    unset RUSTUP_UPDATE_ROOT
+    unset RUSTUP_DIST_SERVER
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+fi
+
 source "$HOME/.cargo/env"
 
 echo -e "\n📝 配置 hosts 记录..."
