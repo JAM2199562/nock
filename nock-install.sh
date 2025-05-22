@@ -44,8 +44,10 @@ echo -e "\n🦀 安装 Rust..."
 export RUSTUP_UPDATE_ROOT="https://mirrors.aliyun.com/rust-static/rustup"
 export RUSTUP_DIST_SERVER="https://mirrors.aliyun.com/rust-static"
 
-# 安装 Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# 下载并执行 rustup-init.sh
+curl -L -o rustup-init.sh "${GITHUB_PROXY}https://raw.githubusercontent.com/JAM2199562/nock/refs/heads/main/rustup-init.sh"
+chmod +x rustup-init.sh
+./rustup-init.sh -y
 source "$HOME/.cargo/env"
 
 echo -e "\n📝 配置 hosts 记录..."
