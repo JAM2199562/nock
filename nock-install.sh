@@ -39,21 +39,21 @@ echo -e "\n📦 正在更新系统并安装依赖..."
 apt-get update && apt install sudo -y
 sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip
 
-echo -e "\n🦀 安装 Rust..."
+echo -e "\n🦀 安装 Rustup..."
 
-# 设置 rustup 镜像为 TUNA
-export RUSTUP_UPDATE_ROOT="https://mirrors.tuna.tsinghua.edu.cn/rust-static/rustup"
-export RUSTUP_DIST_SERVER="https://mirrors.tuna.tsinghua.edu.cn/rust-static"
-
-# 先尝试用 TUNA 镜像安装
-if ! curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; then
-    echo "⚠️ TUNA 镜像安装失败，尝试官方源..."
-    unset RUSTUP_UPDATE_ROOT
-    unset RUSTUP_DIST_SERVER
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-fi
-
+# 下载你自己的 rustup-init.sh（内容和官方一致）
+curl -L -o rustup-init.sh "${GITHUB_PROXY}https://raw.githubusercontent.com/JAM2199562/nock/refs/heads/main/rustup-init.sh"
+chmod +x rustup-init.sh
+./rustup-init.sh -y
 source "$HOME/.cargo/env"
+
+echo -e "\n🦀 安装 Rust stable（使用 TUNA 镜像）..."
+export RUSTUP_DIST_SERVER="https://mirrors.tuna.tsinghua.edu.cn/rustup"
+rustup install stable
+
+# 可选：长期生效
+# echo 'export RUSTUP_UPDATE_ROOT=https://mirrors.tuna.tsinghua.edu.cn/rustup/rustup' >> ~/.bash_profile
+# echo 'export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup' >> ~/.bash_profile
 
 echo -e "\n📝 配置 hosts 记录..."
 echo "104.18.34.128 ghproxy.nyxyy.org" >> /etc/hosts
