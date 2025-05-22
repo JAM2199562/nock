@@ -5,21 +5,6 @@ set -e
 # 设置 GitHub 代理
 GITHUB_PROXY="https://ghproxy.nyxyy.org/"
 
-echo -e "\n📦 检查并安装基础工具..."
-if ! command -v curl &> /dev/null; then
-    echo "安装 curl..."
-    apt-get update && apt-get install -y curl
-fi
-
-echo -e "\n🔧 检查并安装 chsrc 换源工具..."
-if ! command -v chsrc &> /dev/null; then
-    echo "未找到 chsrc，开始安装..."
-    CHSRC_PROXY="${GITHUB_PROXY}https://raw.githubusercontent.com/RubyMetric/chsrc/main/tool/installer.sh"
-    curl -L "$CHSRC_PROXY" | bash -s -- -d /usr/local/bin
-else
-    echo "chsrc 已安装，跳过安装步骤"
-fi
-
 echo -e "\n🔧 配置 needrestart 自动重启服务..."
 # 安装 needrestart
 apt-get update && apt-get install -y needrestart
@@ -39,19 +24,28 @@ echo -e "\n📦 正在更新系统并安装依赖..."
 apt-get update && apt install sudo -y
 sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip
 
+echo -e "\n🔧 检查并安装 chsrc 换源工具..."
+if ! command -v chsrc &> /dev/null; then
+    echo "未找到 chsrc，开始安装..."
+    CHSRC_PROXY="${GITHUB_PROXY}https://raw.githubusercontent.com/RubyMetric/chsrc/main/tool/installer.sh"
+    curl -L "$CHSRC_PROXY" | bash -s -- -d /usr/local/bin
+else
+    echo "chsrc 已安装，跳过安装步骤"
+fi
+
 echo -e "\n🦀 安装 Rust..."
-# 设置 Rust 镜像源为中科大源
-export RUSTUP_UPDATE_ROOT="https://mirrors.ustc.edu.cn/rust-static/rustup"
+# 设置 RUSTUP 镜像源为中科大源
 export RUSTUP_DIST_SERVER="https://mirrors.ustc.edu.cn/rust-static"
+export RUSTUP_UPDATE_ROOT="https://mirrors.ustc.edu.cn/rust-static/rustup"
 
 # 安装 Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+curl --proto '=https' --tlsv1.2 -sSf https://mirrors.ustc.edu.cn/rust-static/rustup/rustup-init.sh | sh -s -- -y
 source "$HOME/.cargo/env"
 
 echo -e "\n📝 配置 hosts 记录..."
-echo "162.159.209.53 ghproxy.nyxyy.org" >> /etc/hosts
+echo "104.18.34.128 ghproxy.nyxyy.org" >> /etc/hosts
 
-# 配置 Cargo 镜像源
+# 使用 chsrc 配置 Cargo 镜像源
 echo -e "\n📡 配置 Cargo 镜像源..."
 # 删除可能存在的旧配置文件
 rm -f ~/.cargo/config
@@ -81,7 +75,10 @@ replace-with = 'github-mirror'
 git = "https://ghproxy.nyxyy.org/https://github.com"
 EOF
 
-echo "✅ Cargo 镜像源配置完成"
+# 使用 chsrc 设置为 ustc 源（中科大源）
+chsrc set cargo ustc
+
+rustup default stable
 
 echo -e "\n📁 检查 nockchain 仓库..."
 # 设置 GitHub 代理
@@ -195,4 +192,3 @@ echo -e "screen -r follower # 查看 follower 日志"
 echo -e "Ctrl+A 再按 D 可退出 screen 会话"
 
 echo -e "\n🎉 部署完成，祝你挖矿愉快！"
-
