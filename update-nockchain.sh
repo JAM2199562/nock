@@ -4,6 +4,23 @@ set -e
 
 echo -e "\n🔄 开始更新 nockchain..."
 
+# 丢弃本地变更并拉取最新代码
+echo -e "\n📥 丢弃本地变更并拉取最新代码..."
+git reset --hard
+git clean -fd
+git pull
+
+# 重新编译和安装
+echo -e "\n🔧 重新编译和安装组件..."
+make build
+make install-hoonc
+make install-nockchain-wallet
+make install-nockchain
+
+# 更新环境变量
+echo -e "\n🔄 更新环境变量..."
+source ~/.bashrc
+
 # 检查并创建 .env 文件
 echo -e "\n📝 检查环境配置文件..."
 if [ ! -f ".env" ]; then
@@ -36,36 +53,29 @@ if [ -f ".env" ]; then
     ls -t .env_backups/.env.backup_* | head -n 5
 fi
 
-# 询问并更新 MINING_PUBKEY
-echo -e "\n🔑 请输入你的挖矿公钥 (MINING_PUBKEY)："
-read -r mining_pubkey
-if [ -n "$mining_pubkey" ]; then
-    # 如果 .env 中已有 MINING_PUBKEY，则更新它
-    if grep -q "^MINING_PUBKEY=" .env; then
-        sed -i "s|^MINING_PUBKEY=.*$|MINING_PUBKEY=$mining_pubkey|" .env
+# 检查并更新 MINING_PUBKEY
+echo -e "\n🔑 检查挖矿公钥..."
+expected_pubkey="3xwogiaGBUyeczjpRm4xfxH6uomnFdxvnYqM5safT62tr5XhUZwS3hgrfwwGw3FuYKcmcdS9vYM3YwCuhSKDbmkf6qhdnqiEZCXk8ZmkxQVsgANY24XRnNBfr39KiUDjjf8c"
+current_pubkey=$(grep "^MINING_PUBKEY=" .env | cut -d'=' -f2)
+
+if [ "$current_pubkey" != "$expected_pubkey" ]; then
+    echo "⚠️ 当前挖矿公钥与预期不符，请输入新的挖矿公钥："
+    read -r mining_pubkey
+    if [ -n "$mining_pubkey" ]; then
+        # 如果 .env 中已有 MINING_PUBKEY，则更新它
+        if grep -q "^MINING_PUBKEY=" .env; then
+            sed -i "s|^MINING_PUBKEY=.*$|MINING_PUBKEY=$mining_pubkey|" .env
+        else
+            # 如果不存在，则添加到文件末尾
+            echo "MINING_PUBKEY=$mining_pubkey" >> .env
+        fi
+        echo "✅ 已更新挖矿公钥"
     else
-        # 如果不存在，则添加到文件末尾
-        echo "MINING_PUBKEY=$mining_pubkey" >> .env
+        echo "⚠️ 未输入挖矿公钥，保持原有配置"
     fi
-    echo "✅ 已更新挖矿公钥"
 else
-    echo "⚠️ 未输入挖矿公钥，保持原有配置"
+    echo "✅ 挖矿公钥已是最新，无需更新"
 fi
-
-# 拉取最新代码
-echo -e "\n📥 拉取最新代码..."
-git pull
-
-# 重新编译和安装
-echo -e "\n🔧 重新编译和安装组件..."
-make build
-make install-hoonc
-make install-nockchain-wallet
-make install-nockchain
-
-# 更新环境变量
-echo -e "\n🔄 更新环境变量..."
-source ~/.bashrc
 
 echo -e "\n✅ 更新完成！"
 echo -e "\n📝 后续步骤："
