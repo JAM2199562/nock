@@ -43,7 +43,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://mirrors.ustc.edu.cn/rust-static/rus
 source "$HOME/.cargo/env"
 
 echo -e "\n📝 配置 hosts 记录..."
-echo "104.18.34.128 ghproxy.nyxyy.org" >> /etc/hosts
+echo "162.159.209.53 ghproxy.nyxyy.org" >> /etc/hosts
 
 # 使用 chsrc 配置 Cargo 镜像源
 echo -e "\n📡 配置 Cargo 镜像源..."
