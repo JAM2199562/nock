@@ -64,7 +64,6 @@ echo "104.18.34.128 ghproxy.nyxyy.org" >> /etc/hosts
 
 # 配置 Cargo 镜像源
 echo -e "\n📡 配置 Cargo 镜像源..."
-# 删除可能存在的旧配置文件
 rm -f ~/.cargo/config
 
 mkdir -p ~/.cargo
@@ -73,7 +72,7 @@ cat > ~/.cargo/config.toml << EOF
 replace-with = 'mirror'
 
 [source.mirror]
-registry = "sparse+https://mirrors.aliyun.com/crates.io-index/"
+registry = "sparse+https://repo.huaweicloud.com/crates.io-index/"
 
 [net]
 git-fetch-with-cli = true
@@ -82,7 +81,7 @@ git-fetch-with-cli = true
 check-revoke = false
 
 [registries.mirror]
-index = "https://mirrors.aliyun.com/crates.io-index"
+index = "https://repo.huaweicloud.com/crates.io-index"
 
 [source.github]
 git = "https://github.com"
