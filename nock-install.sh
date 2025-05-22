@@ -39,25 +39,29 @@ echo -e "\n📦 正在更新系统并安装依赖..."
 apt-get update && apt install sudo -y
 sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip
 
-echo -e "\n🦀 安装 Rustup..."
+echo -e "\n🦀 安装 Rustup (snap 方式)..."
 
-# 下载你自己的 rustup-init.sh（内容和官方一致）
-curl -L -o rustup-init.sh "${GITHUB_PROXY}https://raw.githubusercontent.com/JAM2199562/nock/refs/heads/main/rustup-init.sh"
-chmod +x rustup-init.sh
-./rustup-init.sh -y
-source "$HOME/.cargo/env"
+# 安装 snapd（如未安装）
+sudo apt update
+sudo apt install -y snapd
 
-echo -e "\n🦀 安装 Rust stable（使用 TUNA 镜像，失败自动 fallback 官方源）..."
+# 安装 rustup
+sudo snap install rustup --classic
+
+# 初始化 rustup 环境
+export PATH="$PATH:/snap/bin"
+rustup --version
+
+# 用 TUNA 镜像安装 stable 工具链，失败自动 fallback 官方源
 export RUSTUP_DIST_SERVER="https://mirrors.tuna.tsinghua.edu.cn/rustup"
+echo -e "\n🦀 安装 Rust stable（使用 TUNA 镜像，失败自动 fallback 官方源）..."
 if ! timeout 120s rustup install stable; then
     echo "⚠️ TUNA 镜像安装失败，尝试官方源..."
     unset RUSTUP_DIST_SERVER
     rustup install stable
 fi
 
-# 可选：长期生效
-# echo 'export RUSTUP_UPDATE_ROOT=https://mirrors.tuna.tsinghua.edu.cn/rustup/rustup' >> ~/.bash_profile
-# echo 'export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup' >> ~/.bash_profile
+source "$HOME/.cargo/env"
 
 echo -e "\n📝 配置 hosts 记录..."
 echo "104.18.34.128 ghproxy.nyxyy.org" >> /etc/hosts
