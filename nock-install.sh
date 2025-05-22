@@ -107,6 +107,8 @@ if [ -f "Cargo.toml" ]; then
     cp Cargo.toml Cargo.toml.bak
     # 替换 GitHub 链接为代理链接
     sed -i "s|https://github.com/|${GITHUB_PROXY}https://github.com/|g" Cargo.toml
+    sed -i "s|https://github.com/|${GITHUB_PROXY}https://github.com/|g" Cargo.lock
+
     echo "✅ 已更新 Cargo.toml 中的 GitHub 链接"
 else
     echo "⚠️ 未找到 Cargo.toml 文件"
