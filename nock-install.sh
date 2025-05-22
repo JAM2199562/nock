@@ -47,9 +47,13 @@ chmod +x rustup-init.sh
 ./rustup-init.sh -y
 source "$HOME/.cargo/env"
 
-echo -e "\n🦀 安装 Rust stable（使用 TUNA 镜像）..."
+echo -e "\n🦀 安装 Rust stable（使用 TUNA 镜像，失败自动 fallback 官方源）..."
 export RUSTUP_DIST_SERVER="https://mirrors.tuna.tsinghua.edu.cn/rustup"
-rustup install stable
+if ! timeout 120s rustup install stable; then
+    echo "⚠️ TUNA 镜像安装失败，尝试官方源..."
+    unset RUSTUP_DIST_SERVER
+    rustup install stable
+fi
 
 # 可选：长期生效
 # echo 'export RUSTUP_UPDATE_ROOT=https://mirrors.tuna.tsinghua.edu.cn/rustup/rustup' >> ~/.bash_profile
