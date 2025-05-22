@@ -76,7 +76,7 @@ cat > ~/.cargo/config.toml << EOF
 replace-with = 'mirror'
 
 [source.mirror]
-registry = "sparse+https://repo.huaweicloud.com/crates.io-index/"
+registry = "sparse+https://mirrors.tuna.tsinghua.edu.cn/crates.io-index/"
 
 [net]
 git-fetch-with-cli = true
@@ -85,7 +85,7 @@ git-fetch-with-cli = true
 check-revoke = false
 
 [registries.mirror]
-index = "https://repo.huaweicloud.com/crates.io-index"
+index = "https://mirrors.tuna.tsinghua.edu.cn/crates.io-index"
 
 [source.github]
 git = "https://github.com"
