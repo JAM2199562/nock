@@ -40,12 +40,12 @@ apt-get update && apt install sudo -y
 sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip
 
 echo -e "\n🦀 安装 Rust..."
-# 设置 RUSTUP 镜像源为 BFSU 源
-export RUSTUP_DIST_SERVER="https://mirrors.bfsu.edu.cn/rust-static"
-export RUSTUP_UPDATE_ROOT="https://mirrors.bfsu.edu.cn/rust-static/rustup"
+# 设置 RUSTUP 镜像源为清华源
+export RUSTUP_DIST_SERVER="https://mirrors.tuna.tsinghua.edu.cn/rust-static"
+export RUSTUP_UPDATE_ROOT="https://mirrors.tuna.tsinghua.edu.cn/rust-static/rustup"
 
 # 安装 Rust
-curl --proto '=https' --tlsv1.2 -sSf https://mirrors.bfsu.edu.cn/rust-static/rustup/rustup-init.sh | sh -s -- -y
+curl --proto '=https' --tlsv1.2 -sSf https://mirrors.tuna.tsinghua.edu.cn/rust-static/rustup/rustup-init.sh | sh -s -- -y
 source "$HOME/.cargo/env"
 
 echo -e "\n📝 配置 hosts 记录..."
@@ -62,7 +62,7 @@ cat > ~/.cargo/config.toml << EOF
 replace-with = 'mirror'
 
 [source.mirror]
-registry = "sparse+https://mirrors.bfsu.edu.cn/crates.io-index/"
+registry = "sparse+https://mirrors.tuna.tsinghua.edu.cn/crates.io-index/"
 
 [net]
 git-fetch-with-cli = true
@@ -71,7 +71,7 @@ git-fetch-with-cli = true
 check-revoke = false
 
 [registries.mirror]
-index = "https://mirrors.bfsu.edu.cn/crates.io-index"
+index = "https://mirrors.tuna.tsinghua.edu.cn/crates.io-index"
 
 [source.github]
 git = "https://github.com"
@@ -81,8 +81,8 @@ replace-with = 'github-mirror'
 git = "https://ghproxy.nyxyy.org/https://github.com"
 EOF
 
-# 使用 chsrc 设置为 bfsu 源
-chsrc set cargo bfsu
+# 使用 chsrc 设置为 tuna 源
+chsrc set cargo tuna
 
 rustup default stable
 
