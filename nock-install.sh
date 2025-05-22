@@ -40,18 +40,18 @@ apt-get update && apt install sudo -y
 sudo apt install -y screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip
 
 echo -e "\n🦀 安装 Rust..."
-# 设置 RUSTUP 镜像源为清华源
-export RUSTUP_DIST_SERVER="https://mirrors.tuna.tsinghua.edu.cn/rust-static"
-export RUSTUP_UPDATE_ROOT="https://mirrors.tuna.tsinghua.edu.cn/rust-static/rustup"
+# 设置 Rust 镜像源为中科大源
+export RUSTUP_UPDATE_ROOT="https://mirrors.ustc.edu.cn/rust-static/rustup"
+export RUSTUP_DIST_SERVER="https://mirrors.ustc.edu.cn/rust-static"
 
 # 安装 Rust
-curl --proto '=https' --tlsv1.2 -sSf https://mirrors.tuna.tsinghua.edu.cn/rust-static/rustup/rustup-init.sh | sh -s -- -y
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source "$HOME/.cargo/env"
 
 echo -e "\n📝 配置 hosts 记录..."
 echo "162.159.209.53 ghproxy.nyxyy.org" >> /etc/hosts
 
-# 使用 chsrc 配置 Cargo 镜像源
+# 配置 Cargo 镜像源
 echo -e "\n📡 配置 Cargo 镜像源..."
 # 删除可能存在的旧配置文件
 rm -f ~/.cargo/config
@@ -62,7 +62,7 @@ cat > ~/.cargo/config.toml << EOF
 replace-with = 'mirror'
 
 [source.mirror]
-registry = "sparse+https://mirrors.tuna.tsinghua.edu.cn/crates.io-index/"
+registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
 
 [net]
 git-fetch-with-cli = true
@@ -71,7 +71,7 @@ git-fetch-with-cli = true
 check-revoke = false
 
 [registries.mirror]
-index = "https://mirrors.tuna.tsinghua.edu.cn/crates.io-index"
+index = "https://mirrors.ustc.edu.cn/crates.io-index"
 
 [source.github]
 git = "https://github.com"
@@ -81,10 +81,7 @@ replace-with = 'github-mirror'
 git = "https://ghproxy.nyxyy.org/https://github.com"
 EOF
 
-# 使用 chsrc 设置为 tuna 源
-chsrc set cargo tuna
-
-rustup default stable
+echo "✅ Cargo 镜像源配置完成"
 
 echo -e "\n📁 检查 nockchain 仓库..."
 # 设置 GitHub 代理
